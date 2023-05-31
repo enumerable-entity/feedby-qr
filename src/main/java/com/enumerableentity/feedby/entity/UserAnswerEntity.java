@@ -1,11 +1,13 @@
 package com.enumerableentity.feedby.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "user_answers")
 public class UserAnswerEntity {
@@ -20,5 +22,6 @@ public class UserAnswerEntity {
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private QuestionEntity question;
+
 
 }

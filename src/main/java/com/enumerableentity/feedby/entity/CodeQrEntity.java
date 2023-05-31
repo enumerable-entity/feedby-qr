@@ -17,7 +17,6 @@ public class CodeQrEntity {
     @Column(name = "code", nullable = false)
     private String code;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, optional = false)
-    private CodeDetailsEntity codeDetailsEntity;
-
+    @OneToOne(mappedBy = "code", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, optional = false)
+    private CodeDetailsEntity codeDetails;
 }

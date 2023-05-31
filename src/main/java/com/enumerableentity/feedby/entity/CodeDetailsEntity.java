@@ -18,20 +18,22 @@ public class CodeDetailsEntity {
     private Long id;
 
     @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "code_id", referencedColumnName = "id")
     private CodeQrEntity code;
 
-    @Column(name = "pointAddress", nullable = true)
+    @Column(name = "point_address", nullable = true)
     private String pointAddress;
 
-    @Column(name = "ownerName", nullable = true)
+    @Column(name = "owner_name", nullable = true)
     private String ownerName;
 
-    @Column(name = "productTitle", nullable = true)
+    @Column(name = "product_title", nullable = true)
     private String productTitle;
 
     @Column(name = "background_url", nullable = true)
     private String backgroundUrl;
 
-    @OneToMany(orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "codeDetails")
+    @OneToMany(orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "code_details_id", referencedColumnName = "id")
     private List<QuestionEntity> questions;
 }
