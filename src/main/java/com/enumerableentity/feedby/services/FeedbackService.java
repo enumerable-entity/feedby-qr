@@ -1,22 +1,19 @@
 package com.enumerableentity.feedby.services;
 
+import com.enumerableentity.feedby.commons.enums.QuestionType;
 import com.enumerableentity.feedby.dto.QuizAnswerDTO;
 import com.enumerableentity.feedby.dto.QuizDTO;
+import com.enumerableentity.feedby.entity.AnswerEntity;
 import com.enumerableentity.feedby.entity.CodeQrEntity;
+import com.enumerableentity.feedby.entity.GeneralAnswersEntity;
 import com.enumerableentity.feedby.entity.UserAnswerEntity;
 import com.enumerableentity.feedby.mapper.QuizMapper;
-import com.enumerableentity.feedby.repositories.AnswerRepository;
-import com.enumerableentity.feedby.repositories.CodeRepository;
-import com.enumerableentity.feedby.repositories.QuestionRepository;
-import com.enumerableentity.feedby.repositories.UserAnswerRepository;
+import com.enumerableentity.feedby.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +23,7 @@ public class FeedbackService {
     private final UserAnswerRepository userAnswerRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
+    private final GeneralAnswersRepository generalAnswersRepository;
 
     public QuizDTO getQuestionsForCode(String qrcode) {
         CodeQrEntity code = codeRepository.findByCode(qrcode);
@@ -40,17 +38,23 @@ public class FeedbackService {
     }
 
     @Transactional
-    public QuizAnswerDTO leaveFeedback(QuizAnswerDTO quizAnswerDTO) {
+    public void leaveFeedback(QuizAnswerDTO quizAnswerDTO, String qrCode) {
 
         List<UserAnswerEntity> list = quizAnswerDTO.getQuestions().stream()
-                .flatMap(questionDTO ->
-                    questionDTO.getAnswers().stream()
-                            .map(answerDTO -> UserAnswerEntity.builder()
-                                    .question(questionRepository.getReferenceById(questionDTO.getId()))
-                                    .answer(answerRepository.getReferenceById(answerDTO.getId())).build()
-                )).toList();
-
+                .map(questionDTO -> UserAnswerEntity.builder()
+                        .question(questionRepository.getReferenceById(questionDTO.getId()))
+                        .answer(questionDTO.getType().equals(QuestionType.YES_NO) ? null :
+                                answerRepository.getReferenceById(questionDTO.getAnswerId()))
+                        .yesNoAnswer(questionDTO.getType().equals(QuestionType.YES_NO) ?
+                                questionDTO.getAnswer() : null)
+                        .build()
+                ).toList();
+        CodeQrEntity code = codeRepository.findByCode(qrCode);
+        generalAnswersRepository.save(GeneralAnswersEntity.builder()
+                .customAnswer(quizAnswerDTO.getCustomAnswer())
+                .ranking(quizAnswerDTO.getRanking())
+                .code(code)
+                .build());
         userAnswerRepository.saveAll(list);
-        return null;
     }
 }

@@ -31,6 +31,6 @@ public class QuestionEntity {
     private CodeDetailsEntity codeDetails;
 
     @OneToMany(orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "question")
-    private List<UserAnswerEntity> userAnswer;
+    private List<AnswerEntity> userAnswer;
 
 }

@@ -4,6 +4,7 @@ import com.enumerableentity.feedby.dto.QuizAnswerDTO;
 import com.enumerableentity.feedby.dto.QuizDTO;
 import com.enumerableentity.feedby.services.FeedbackService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +19,10 @@ public class FeedbackController {
         return ResponseEntity.ok(feedbackService.getQuestionsForCode(code));
     }
 
-    @PostMapping
-    public ResponseEntity<QuizAnswerDTO> leaveFeedback(@RequestBody QuizAnswerDTO quizAnswerDTO) {
-        return ResponseEntity.ok(feedbackService.leaveFeedback(quizAnswerDTO));
+    @PostMapping("/{code}")
+    public ResponseEntity<Void> leaveFeedback(@RequestBody QuizAnswerDTO quizAnswerDTO, @PathVariable String code) {
+        feedbackService.leaveFeedback(quizAnswerDTO, code);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 }
