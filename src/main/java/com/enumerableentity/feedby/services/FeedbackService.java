@@ -3,7 +3,6 @@ package com.enumerableentity.feedby.services;
 import com.enumerableentity.feedby.commons.enums.QuestionType;
 import com.enumerableentity.feedby.dto.QuizAnswerDTO;
 import com.enumerableentity.feedby.dto.QuizDTO;
-import com.enumerableentity.feedby.entity.AnswerEntity;
 import com.enumerableentity.feedby.entity.CodeQrEntity;
 import com.enumerableentity.feedby.entity.GeneralAnswersEntity;
 import com.enumerableentity.feedby.entity.UserAnswerEntity;
