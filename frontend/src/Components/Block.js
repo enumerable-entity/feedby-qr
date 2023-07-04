@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import $ from 'jquery'
 
 
@@ -16,6 +16,27 @@ function Block(props) {
         "questions": answers
 
     }
+
+    const textAreaRef = useRef(null);
+
+    const useAutosizeTextArea = (
+        textAreaRef,
+        value
+    ) => {
+        useEffect(() => {
+            if (textAreaRef) {
+                // We need to reset the height momentarily to get the correct scrollHeight for the textarea
+                textAreaRef.style.height = "0px";
+                const scrollHeight = textAreaRef.scrollHeight;
+
+                // We then set the height directly, outside of the render loop
+                // Trying to set this with state or a ref will product an incorrect value.
+                textAreaRef.style.height = scrollHeight + "px";
+            }
+        }, [textAreaRef, value]);
+    };
+
+    useAutosizeTextArea(textAreaRef.current, custom);
 
     const handleInput = event => {
         setCustome(event.target.value)
@@ -169,8 +190,17 @@ function Block(props) {
                 </div>
             ))}
 
-            <textarea onChange={handleInput} className='textArea' placeholder='Napisz własną propozycje...'
-                      value={custom}/>
+            {/*<textarea onChange={handleInput} className='textArea' placeholder='Napisz własną propozycje...'*/}
+            {/*          value={custom}/>*/}
+            <textarea
+                className='textArea'
+                id="review-text"
+                onChange={handleInput}
+                placeholder="Napisz własną propozycje..."
+                ref={textAreaRef}
+                rows={1}
+                value={custom}
+            />
 
             <div className="star-rating">
                 {[...Array(5)].map((star, index) => {
